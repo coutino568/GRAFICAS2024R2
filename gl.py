@@ -9,6 +9,9 @@ from texture import *
 from shader import *
 
 V2 = namedtuple('Point2', ['x', 'y'])
+V3 = namedtuple('Point3', ['x', 'y', 'z'])
+V4 = namedtuple('Point4', ['x', 'y', 'z', 'w'])
+
 
 def char(c):
     # used to reduce it to 1 byte
@@ -93,9 +96,85 @@ class Renderer(object):
 
 
     def glSetColor(self, r,g,b):
-        self.mainColor = color(r,g,b)
+        if(max(r,g,b,1)>1):
+            self.mainColor = color(r/255,g/255,b/255)
+        else:
+            self.mainColor = color(r,g,b)
+            
+            
+    def SetProjectionMatrix(self, nearPlane = 0.1, farPlane = 1000, fov = 60 ):
+        top = tan((fov * math.pi / 180) / 2) * nearPlane
+        right = top * self.vpWidth / self.vpHeight
 
+        self.projectionMatrix = [[nearPlane/right, 0, 0, 0],
+                                           [0, nearPlane/top, 0, 0],
+                                           [0, 0, -(farPlane+nearPlane)/(farPlane-nearPlane), -(2*farPlane*nearPlane)/(farPlane-nearPlane)],
+                                           [0, 0, -1, 0]]
+        
+        
+    def SetViewMatrix(self, translate = V3(0,0,0), rotate = V3(0,0,0)):
+        self.camMatrix = self.glCreateObjectMatrix(translate,V3(1,1,1),rotate)
+        self.viewMatrix = matrixInverse(self.camMatrix)
+        
 
+    ### es/deberia ser un metodo propio de la clase objeto, pero para la transformacion de la camara es necesario poder acceder a esto como una funcion
+    def scaleMatrix(self,scaleX,scaleY,scaleZ):
+        scaleMatrix = [[scaleX,0,0,0],[0,scaleY,0,0],[0,0,scaleZ,0],[0,0,0,1]]
+        self.cameraMatrix = scaleMatrix
+        
+    ### es/deberia ser un metodo propio de la clase objeto, pero para la transformacion de la camara es necesario poder acceder a esto como una funcion
+    def transformMatrix(self,movementX,movementY,movementZ):
+        transformationMatrix = [[1,0,0,movementX],[0,1,0,movementY],[0,0,1,movementZ],[0,0,0,1]]
+        self.cameraMatrix = matrixMultiplication(transformationMatrix,self.cameraMatrix )
+        
+        
+    #es un metodo propio de la clase objeto, pero para la transformacion de la camara es necesario poder acceder a esto como una funcion
+    def rotateMatrix(self,rotationX,rotationY,rotationZ):
+        pitch = degreesToRad(rotationX)
+        yaw = degreesToRad(rotationY)
+        roll= degreesToRad(rotationZ)
+        
+        RotationMatrixX = [[1,0,0,0],[0,math.cos(pitch),-math.sin(pitch),0,0],[0,math.sin (pitch),math.cos(pitch),0],[0,0,0,1]]
+        RotationMatrixY = [[math.cos(yaw),0,math.sin(yaw),0],[0,1,0,0],[-math.sin(yaw),0,math.cos(yaw),0],[0,0,0,1]]
+        RotationMatrixZ = [[math.cos(roll),-math.sin(roll),0,0],[math.sin(roll),math.cos(roll),0,0],[0,0,1,0],[0,0,0,1]]
+
+        res1 = matrixMultiplication(RotationMatrixX,RotationMatrixY )
+        RotationMatrix = matrixMultiplication(res1,RotationMatrixZ,)
+        self.cameraMatrix = matrixMultiplication(RotationMatrix,self.cameraMatrix)
+        
+    
+    
+    
+    ## Esta funcion es igual a la de la calse objeto
+    def createObjectMatrix(self, scale = (1,1,1), rotation = (0,0,0), transformation = (0,0,0)):
+        
+        self.scaleMatrix (scale[0],scale[1],scale[2])
+        self.rotateMatrix(rotation[0],rotation[1],rotation[2])
+        self.transformMatrix(transformation[0],transformation[1],transformation[2])
+        #el resultado de estas transformaciones se guardaran en camera matrix
+        
+    
+    
+    
+    
+    
+    def glCameraTransform( self, vertex ):
+        augmentedVertex = V4(vertex[0], vertex[1], vertex[2], 1)
+        res1 = matrixMultiplication(self.viewportMatrix,self.projectionMatrix)
+        res2 = matrixMultiplication(res1,self.viewMatrix)
+        transformedVertex = matrixMultiplication(res2,augmentedVertex)
+        
+        transformedVertex = transformedVertex.tolist()[0]
+
+        transformedVertex = V3(transformedVertex[0] / transformedVertex[3],
+                         transformedVertex[1] / transformedVertex[3],
+                         transformedVertex[2] / transformedVertex[3])
+
+        return transformedVertex
+    
+    
+    
+    
     def glLine(self, x0,y0,x1, y1):
 
         x0 = int(x0)
@@ -372,10 +451,10 @@ class Renderer(object):
                 
             
                 # MAS ADELANTE SE USARA ESTE METODO PARA PASARLE A LA FUNCION tirnagle 3 la respuesta del shader
-                # self.glTriangle3(objeto.shaderName,vertices[0],vertices[1],vertices[2],textCoord, normals)
+                self.glTriangle3(objeto.shaderName,vertices[0],vertices[1],vertices[2],textCoord, normals)
                 
-                self.glSetColor(1,1,1)
-                self.glTrinagleOutside(vert1,vert2,vert3)
+                # self.glSetColor(1,1,1)
+                #self.glTrinagleOutside(vert1,vert2,vert3)
                 
             self.activeObjectIndex +=1
 

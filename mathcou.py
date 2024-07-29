@@ -55,7 +55,20 @@ def matrixVectorMultiplication (matrix, vector):
         print("Tamaño invlaido")
         
 
-
+def matrixInverse(matrix):
+    if len(matrix[0])==4  and len(matrix)==4:
+        #es una matriz de 4 x4
+        result= [[0 for x in  range(len(matrix)*2)] for y in range (len(matrix[0]))]
+        augmentedMatrix= [[0 for x in  range(len(matrix))] for y in range (len(matrix[0]))]
+        identity = [[ 1 if x==y else  0  for x in  range(len(matrix))] for y in range (len(matrix[0]))]
+        
+        
+        
+    print(result)
+    print(identity)
+        
+    pass
+    
 
 
 def dotProduct (Vector1, Vector2):
@@ -179,3 +192,8 @@ def getAreaOfTiangle(A,B,C):
     
     return result
 
+
+
+matrix = [[5,6,8,10],[10,-5,8,5],[5,8,10,5],[0,0,0,1]]
+
+matrixInverse(matrix)

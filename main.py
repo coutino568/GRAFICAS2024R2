@@ -37,7 +37,7 @@ myRenderer.glViewPort(viewportX,viewportY,viewportWidth,viewportHeight)
 
 
 # pero por el momento  el objeto no usara el atributo de shader. ahora solo dibujara lineas
-shaderName3= "SMOOTH"
+shaderName3= "BLACKANDWHITE"
 objectFilename3="./assets/witchkingcentered.obj"
 textureFilename3= "./assets/Metal1.bmp"
 rotate3=[0,180,0]
@@ -46,25 +46,39 @@ scale3=[100,100,100]
 myRenderer.glLoadObject(objectFilename3,textureFilename3,shaderName3,transform3,scale3,rotate3)
 
 
-
 shaderName3= "SMOOTH"
 objectFilename3="./assets/witchkingcentered.obj"
 textureFilename3= "./assets/Metal1.bmp"
-rotate3=[0,125,0]
-transform3=[250,500,-70]
-scale3=[100,100,100]
+rotate3=[0,180,0]
+transform3=[850,500,200]
+scale3=[200,200,200]
 myRenderer.glLoadObject(objectFilename3,textureFilename3,shaderName3,transform3,scale3,rotate3)
 
 
 
 
-shaderName3= "SMOOTH"
-objectFilename3="./assets/witchkingcentered.obj"
-textureFilename3= "./assets/Metal1.bmp"
-rotate3=[0,250,0]
-transform3=[1500,500,-70]
-scale3=[100,100,100]
-myRenderer.glLoadObject(objectFilename3,textureFilename3,shaderName3,transform3,scale3,rotate3)
+
+
+
+
+# shaderName3= "FLAT"
+# objectFilename3="./assets/witchkingcentered.obj"
+# textureFilename3= "./assets/Metal1.bmp"
+# rotate3=[0,125,0]
+# transform3=[250,500,-70]
+# scale3=[100,100,100]
+# myRenderer.glLoadObject(objectFilename3,textureFilename3,shaderName3,transform3,scale3,rotate3)
+
+
+
+# myRenderer.glSetColor(255,25,50)
+# shaderName3= "SMOOTH"
+# objectFilename3="./assets/witchkingcentered.obj"
+# textureFilename3= "./assets/Metal1.bmp"
+# rotate3=[0,250,0]
+# transform3=[1500,500,-70]
+# scale3=[100,100,100]
+# myRenderer.glLoadObject(objectFilename3,textureFilename3,shaderName3,transform3,scale3,rotate3)
 
 
 
